@@ -1,5 +1,5 @@
 PShader shader;
-String filename = "shader.frag";
+String filename = "circle_field.frag";
 
 void settings() throws IllegalArgumentException {
   size(640, 640, P2D);

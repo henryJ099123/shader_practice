@@ -26,7 +26,7 @@ void main() {
     vec3 pct;
     
     float adv = st.x + u_time;
-    
+
     pct.r = clamp(0.5 + cos(2.0*PI*adv), 0.0, 1.0);
     pct.g = clamp(0.5 + sin(2.0*PI*(adv-1.0/12.0)), 0.0, 1.0);
     pct.b = clamp(0.5 + sin(2.0*PI*(adv - 5.0/12.0)), 0.0, 1.0);
