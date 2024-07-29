@@ -27,7 +27,8 @@ float noise (in vec2 st) {
 
     vec2 u = smoothstep(0.0, 1.0, fpos);
 
-    //bilinear interpolation -- explanation of the math to get here below
+    //bilinear interpolation - would work the same if we did two vertical
+    //      linear interpolations first and horizontally connected them too
     float r_dc = mix(d, c, u.x);
     float r_ab = mix(a, b, u.x);
     float p = mix(r_ab, r_dc, u.y);
@@ -73,7 +74,8 @@ void main() {
     //      along the y-axis
     //this produces a linear interpolation between all four points of the square
     //interpolating all the values inside the square based on the four corners!!
-     //************ BREAKDOWN OF BILINEAR INTERPOLATION OVER ********//
+    //************ BREAKDOWN OF BILINEAR INTERPOLATION OVER ********//
+
     float r_dc = mix(d, c, u.x);
     float r_ab = mix(a, b, u.x);
     float p = mix(r_ab, r_dc, u.y);
