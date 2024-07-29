@@ -68,7 +68,8 @@ float arc(in vec2 _center, in float _rad, in float _thickness, in float _pct_arc
 
 void main(){
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    
+    st.x *= u_resolution.x / u_resolution.y;
+
     st -= vec2(0.5);
     
     //st *= rotate(0.5);

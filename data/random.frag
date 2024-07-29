@@ -21,6 +21,7 @@ void main() {
     vec3 color2 = vec3(0.5, 0.3, 1.);
     
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st.x *= u_resolution.x / u_resolution.y;
 	vec2 mouse = u_mouse / u_resolution;
     st.x *= 50.0; // Scale the coordinate system by 10
     st.y *= 50.;
