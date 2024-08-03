@@ -8,6 +8,11 @@ uniform vec2 u_mouse;
 uniform vec2 u_resolution;
 uniform float u_time;
 
+//theta is in radians!
+mat2 rotate(float theta) {
+    return mat2(cos(theta), sin(theta), -sin(theta), cos(theta));
+}
+
 //pseudo-random code
 float random (vec2 st) {
     return fract(sin(dot(st.xy,
@@ -45,12 +50,15 @@ void main() {
     vec2 st = gl_FragCoord.xy / u_resolution;
     st.x *= u_resolution.x / u_resolution.y;
 
+    //centers the coordinate space
     st -= vec2(0.5);
 
+    //converts to polar
     vec2 polar = vec2(length(st), atan(st.y, st.x));
 
+    //input for noise
     vec2 noise_input = polar * 25.;
-    noise_input.r += 2. * u_time;
+    noise_input.r += 2. * u_time; //will allow some scaling with time
 
     float pct = ring(st, 0.1 + 0.2 * noise(noise_input),  0.2 * noise(noise_input));
 
