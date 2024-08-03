@@ -50,6 +50,8 @@ void main() {
     vec2 st = gl_FragCoord.xy / u_resolution;
     st.x *= u_resolution.x / u_resolution.y;
 
+    vec2 mouse = u_mouse / u_resolution;
+
     //centers the coordinate space
     st -= vec2(0.5);
 
@@ -62,7 +64,10 @@ void main() {
 
     float pct = ring(st, 0.1 + 0.2 * noise(noise_input),  0.2 * noise(noise_input));
 
-    vec3 color = pct * vec3(1.0);
+    vec3 color = pct * vec3(mouse.x, mouse.y, 1.0);
     
+    //uncomment to see the gradient the mouse moves over
+    //color = vec3(st.x + 0.5, st.y + 0.5, 1.0);
+
     gl_FragColor = vec4(color, 1.0);
 }
