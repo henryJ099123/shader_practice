@@ -64,7 +64,7 @@ void main() {
 
     float pct = ring(st, 0.1 + 0.2 * noise(noise_input),  0.2 * noise(noise_input));
 
-    vec3 color = pct * vec3(mouse.x, mouse.y, 1.0);
+    vec3 color = pct * mix(vec3(mouse.x, mouse.y, 1.0), vec3(1.0), 0.5);
     
     //uncomment to see the gradient the mouse moves over
     //color = vec3(st.x + 0.5, st.y + 0.5, 1.0);
