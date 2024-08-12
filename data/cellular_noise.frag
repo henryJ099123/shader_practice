@@ -114,7 +114,8 @@ vec2 transform(in vec2 st, float scale, vec2 pre_translate, vec2 post_translate)
     //uv.y = 1.-pow((2.*(uv.y-0.5)),2.);
     uv *= scale;
     //uv.y = mod(uv.y, scale);
-    uv -= post_translate;
+    uv.r = 5. * sin(uv.r);
+    uv += post_translate;
     return uv;
 }
 
@@ -136,6 +137,7 @@ void main() {
 	vec3 voronoi = hardlines_voronoi_with_point(st, SCALE, mouse);
 
     color += vec3(step(voronoi.x, 0.02));
+    //color *= mix(color, vec3(0.2902, 0.4824, 0.9608), voronoi.x);
 
 //     // Show isolines
 //     color -= abs(sin(80.0*m_dist))*0.07;
