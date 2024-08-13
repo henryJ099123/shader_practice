@@ -5,52 +5,49 @@
 precision mediump float;
 #endif
 
+#define PI 3.14159265
+
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123);
+                         vec2(1.234,56.789)))*
+        123456.789);
 }
 
-// Based on Morgan McGuire @morgan3d
-// https://www.shadertoy.com/view/4dS3Wd
+//noise function by interpolating between corners of square
 float noise (in vec2 st) {
     vec2 i = floor(st);
     vec2 f = fract(st);
 
-    // Four corners in 2D of a tile
+    // Four corners of square
     float a = random(i);
     float b = random(i + vec2(1.0, 0.0));
     float c = random(i + vec2(0.0, 1.0));
     float d = random(i + vec2(1.0, 1.0));
 
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
+    vec2 u = smoothstep(0.,1.,f);
     return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-    //return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
 }
 
-#define OCTAVES 6
+#define ITERATIONS 6
 float fbm (in vec2 st) {
     // Initial values
-    float value = 0.;
+    float val = 0.;
     float amplitude = .5;
-    float frequency = 0.;
-    //
-    // Loop of octaves
-    for (int i = 0; i < OCTAVES; i++) {
-        value += amplitude * noise(st);
-        //value += noise(10. * vec2(u_time, u_time));
-        st *= 2.;
-        amplitude *= 0.5;
+    float frequency = 1.5; 
+    float amp_scale = .5; //should be less than 1
+    float freq_scale = 2.; //should be greater than 1
+    
+    //number of "octaves" / scaled waves
+    for (int i = 0; i < ITERATIONS; i++) {
+        val += amplitude * noise(st * frequency);
+        frequency *= freq_scale;
+        amplitude *= amp_scale;
     }
-    //value += noise(vec2(u_time));
-    return value;
+    return val;
 }
 
 void main() {
@@ -60,17 +57,25 @@ void main() {
 	
     vec3 color = vec3(0.0);
     //float fbm0 = fbm(st+vec2(0.490,0.020)+fbm(st+vec2(-0.240,0.090)+fbm(st+10.*vec2(0.680,0.310))));
-    float fbm1 = fbm(st+10.*vec2(0.680,0.310) - 0.2*u_time);
-    
-    color += mix(vec3(0.0), vec3(0.980,0.318,0.004), fbm1);
-    
-    float fbm2 = fbm(st+vec2(-0.240,0.090)+fbm1 + 0.3 * u_time);
-    
-    color += mix(vec3(0.0), vec3(0.3216, 0.3882, 0.349), fbm2);
-    
-    float fbm0 = fbm(st+vec2(0.490,0.020)+ fbm2+noise(st)*noise(st)+0.3*u_time);
-    
-    color += mix(vec3(0.276,0.756,1.000), vec3(0.002,0.000,0.170), 1.0 - fbm0);
+    float fbm1 = fbm(st+10.*vec2(0.680,0.310) - vec2(0.3, 0.1)*u_time);
+    float fbm2 = fbm(st+vec2(-0.240,0.090)+fbm1 + vec2(0.3*sin(st.x+u_time+noise(st)), 0.5 * u_time));
+    float fbm3 = fbm(st+vec2(0.490,0.020) + fbm2+0.3*u_time);
+     
+    //change this value to see different color saturations
+    //right now, 0 or not 0 :D
+    int color_choice = 1;
+    if(color_choice == 0) {
+        //color option 1
+        color += mix(vec3(0.), vec3(0.980,0.318,0.004), fbm1);
+        color += mix(vec3(0.), vec3(0.3216, 0.3882, 0.349), fbm2);
+        color += mix(vec3(0.276,0.756,1.000), vec3(0.002,0.000,0.170), fbm3);
+    }
+    else {
+        //color option 2
+        color += mix(vec3(0.276,0.756,1.000), vec3(0.980,0.318,0.004), fbm1);
+        color += mix(color, vec3(0.3216, 0.3882, 0.349), fbm2);
+        color *= mix(color, vec3(0.002,0.000,0.170), fbm3);
+    }
 
     gl_FragColor = vec4(color,1.0);
 }
