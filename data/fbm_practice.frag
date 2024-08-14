@@ -1,5 +1,5 @@
-// Author @patriciogv - 2015
-// http://patriciogonzalezvivo.com
+// fbm_practice.frag
+// working on some fractal brownian motion
 
 #ifdef GL_ES
 precision mediump float;
@@ -62,19 +62,30 @@ void main() {
     float fbm3 = fbm(st+vec2(0.490,0.020) + fbm2+0.3*u_time);
      
     //change this value to see different color saturations
-    //right now, 0 or not 0 :D
-    int color_choice = 1;
+    //right now, 0, 1 or not those :D
+    //I don't *fully* understand these--mostly just playing with values--but I'm getting there
+    int color_choice = 3;
     if(color_choice == 0) {
         //color option 1
         color += mix(vec3(0.), vec3(0.980,0.318,0.004), fbm1);
         color += mix(vec3(0.), vec3(0.3216, 0.3882, 0.349), fbm2);
         color += mix(vec3(0.276,0.756,1.000), vec3(0.002,0.000,0.170), fbm3);
     }
-    else {
+    else if(color_choice == 1) {
         //color option 2
-        color += mix(vec3(0.276,0.756,1.000), vec3(0.980,0.318,0.004), fbm1);
+        color = mix(vec3(0.276,0.756,1.000), vec3(0.980,0.318,0.004), fbm1);
         color += mix(color, vec3(0.3216, 0.3882, 0.349), fbm2);
         color *= mix(color, vec3(0.002,0.000,0.170), fbm3);
+    }
+    else if(color_choice == 2) {
+        color = mix(vec3(1.0, 0.2902, 0.4667), vec3(0.9804, 0.4745, 0.0039), fbm1);
+        color = mix(color, vec3(0.6157, 0.9765, 0.7412), fbm2);
+        color = mix(color, vec3(0.149, 0.0824, 0.4118), fbm3);
+    }
+    else {
+        color -= mix(vec3(1.0, 0.2902, 0.4667), vec3(0.9804, 0.4745, 0.0039), fbm1);
+        color += mix(color, vec3(1.0, 1.0, 1.0), fbm2);
+        color *= mix(color, vec3(0.2353, 0.0706, 0.4353), fbm3);
     }
 
     gl_FragColor = vec4(color,1.0);
