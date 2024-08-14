@@ -124,6 +124,7 @@ void main() {
     st.x *= u_resolution.x/u_resolution.y;
     const float SCALE = 10.;
     vec2 mouse = u_mouse / u_resolution;
+    mouse.x *= u_resolution.x / u_resolution.y;
     vec3 color = vec3(0.0);
     
 //     st -= 0.5;
