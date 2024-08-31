@@ -1,3 +1,7 @@
+//mandelbrot_set.frag
+//displays the mandelbrot set
+//move mouse across screen to zoom in
+
 #ifdef GL_ES
 precision mediump float;
 #endif
