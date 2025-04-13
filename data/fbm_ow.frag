@@ -52,8 +52,11 @@ float fbm (in vec2 st) {
 
 void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    vec2 mouse = u_mouse / u_resolution;
+    mouse.x *= u_resolution.x/u_resolution.y;
     st.x *= u_resolution.x/u_resolution.y;
 	st *= 4.5;
+    mouse *= 4.5;
 
     float time = u_time;
 
@@ -64,17 +67,16 @@ void main() {
     float fbm3 = fbm(st+vec2(0.490,0.020)*fbm2 + vec2(0.5, 0.5)*0.1*sin(1.5*time) + 0.1*time + fbm1);
      
     //different color variations happening over here!
-    int picker = 0;
-    if(picker == 0) {
-        color += mix(vec3(0.8627, 0.502, 0.0863), vec3(0.0706, 0.2784, 0.098), fbm1);
-        color += mix(vec3(0.9176, 0.4431, 0.4431), vec3(0.6039, 0.0471, 0.5294), fbm2);
-        color *= mix(color, vec3(0.0, 0.0, 0.0), fbm3);
+    color += mix(vec3(0.8627, 0.502, 0.0863), vec3(0.0706, 0.2784, 0.098), fbm1);
+    color += mix(vec3(0.9176, 0.4431, 0.4431), vec3(0.6039, 0.0471, 0.5294), fbm2);
+    color *= mix(color, vec3(0.0, 0.0, 0.00), clamp(fbm3, 0., 1.));
+
+    //comment out the following line to remove the mouse functionality
+    if (!(u_mouse.x <= 25. || u_mouse.x >= u_resolution.x -25. || u_mouse.y <= 25. || u_mouse.y >= u_resolution.y - 25.)) {
+        color *= mix(vec3(0.0, 0.0, 0.0), vec3(1.) , smoothstep(0.9, 1., 0.8*length(st-mouse)+fbm3));
     }
-    else {
-        color += mix(vec3(0.0863, 0.8627, 0.7451), vec3(0.0706, 0.2784, 0.098), fbm1);
-        color += mix(color, vec3(0.6039, 0.0471, 0.5294), fbm2);
-        color *= mix(color, vec3(0.0392, 0.149, 0.4471), fbm3);
-    }
+
+    // color = mix(color, vec3(0.0, 0.0, 0.0),1. - step(0.1, (length(st-mouse))));
 
     gl_FragColor = vec4(color,1.0);
 }
