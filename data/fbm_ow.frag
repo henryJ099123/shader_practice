@@ -73,7 +73,8 @@ void main() {
 
     //comment out the following line to remove the mouse functionality
     if (!(u_mouse.x <= 25. || u_mouse.x >= u_resolution.x -25. || u_mouse.y <= 25. || u_mouse.y >= u_resolution.y - 25.)) {
-        color *= mix(vec3(0.0, 0.0, 0.0), vec3(1.) , smoothstep(0.9, 1., 0.8*length(st-mouse)+fbm3));
+        color -= mix(vec3(0.0, 0.0, 0.0), vec3(.9) , 1.-smoothstep(0.7, 1., 0.8*length(st-mouse)+fbm3));
+        //color *= mix(vec3(0.0, 0.0, 0.0), vec3(1.) , smoothstep(0.9, 1., 0.8*length(st-mouse)+fbm3));
     }
 
     // color = mix(color, vec3(0.0, 0.0, 0.0),1. - step(0.1, (length(st-mouse))));
