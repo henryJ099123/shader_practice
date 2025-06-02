@@ -70,7 +70,7 @@ void main() {
     color += mix(vec3(0.8627, 0.502, 0.0863), vec3(0.0706, 0.2784, 0.098), fbm1);
     color += mix(vec3(0.9176, 0.4431, 0.4431), vec3(0.6039, 0.0471, 0.5294), fbm2);
     color *= mix(color, vec3(0.0, 0.0, 0.00), clamp(fbm3, 0., 1.));
-
+    color *= .8;
     //comment out the following line to remove the mouse functionality
     if (!(u_mouse.x <= 25. || u_mouse.x >= u_resolution.x -25. || u_mouse.y <= 25. || u_mouse.y >= u_resolution.y - 25.)) {
         color -= mix(vec3(0.0, 0.0, 0.0), vec3(.9) , 1.-smoothstep(0.7, 1., 0.8*length(st-mouse)+fbm3));

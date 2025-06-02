@@ -17,6 +17,10 @@ float random (in vec2 st) {
         123456.789);
 }
 
+vec2 sin2(in float x, in float y) {
+    return vec2(sin(x), sin(y));
+}
+
 //noise function by interpolating between corners of square
 float noise (in vec2 st) {
     vec2 i = floor(st);
@@ -52,33 +56,38 @@ float fbm (in vec2 st) {
 
 void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    vec2 mouse = u_mouse.xy / u_resolution.xy;
-    st.x *= u_resolution.x/u_resolution.y;
+    vec2 mouse = u_mouse / u_resolution;
     mouse.x *= u_resolution.x/u_resolution.y;
-    mouse *= 4.5;
+    st.x *= u_resolution.x/u_resolution.y;
+    vec2 rt = st - vec2(0.5);
 	st *= 4.5;
-
+    mouse *= 4.5;
+    rt = vec2(length(rt) * 10., atan(rt.y, rt.x));
     float time = u_time;
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     //float fbm0 = fbm(st+vec2(0.490,0.020)+fbm(st+vec2(-0.240,0.090)+fbm(st+10.*vec2(0.680,0.310))));
-    float fbm1 = fbm(st+5.*vec2(-0.5,1.5)*.05*cos(0.125*time) - 2.*vec2(0.25, 0.1)*time);
-    float fbm2 = fbm(st+vec2(-0.240,0.090)+0.5*fbm1+ vec2(-0.5 * time, 0.3*sin(st.y+time+noise(st))));
-    float fbm3 = fbm(st+vec2(0.490,0.020)*fbm2 + vec2(0.5, 0.5)*0.1*sin(1.5*time) + 0.1*time + fbm1);
-     
+    float fbm1 = fbm(st*0.65+time/50.);
+    float fbm2 = fbm(st*fbm1 + time/25. - cos(time/100.)/1.);
+    float fbm3 = fbm(st + fbm2 + vec2(-time/15., time / 15.));
+    float fbm4 = fbm(0.5*sin(st*2.) + fbm3 + time/2.);
+
+
     //different color variations happening over here!
-    //color += mix(vec3(0.0863, 0.8627, 0.7451), vec3(0.0706, 0.2784, 0.098), fbm1);
-    //color += mix(vec3(0.0863, 0.8627, 0.7451), vec3(0.6941, 0.4275, 0.0275), fbm1);
-    color += mix(vec3(0.0863, 0.8627, 0.7451), vec3(0.2784, 0.149, 0.0706), fbm1);
-    color += mix(vec3(0.9176, 0.4431, 0.4431), vec3(0.6039, 0.0471, 0.5294), fbm2);
-    color *= mix(color, vec3(0.0392, 0.149, 0.4471), fbm3);
+    color = vec3(1.);
+    color = mix(vec3(0.4314, 0.0, 0.0), vec3(0.251, 0.1176, 0.502), fbm1);
+    color = mix(color, vec3(1.0, 0.3412, 0.0157), fbm2);
+    color = mix(color, vec3(0.0, 0.0, 0.0), fbm3);
+    // color = mix(color, vec3(0.4941, 0.0, 0.0), .5*fbm4);
+    color *= 1.8;
 
-        //comment out the following line to remove the mouse functionality
-    if (!(u_mouse.x <= 25. || u_mouse.x >= u_resolution.x -25. || u_mouse.y <= 25. || u_mouse.y >= u_resolution.y - 25.)) {
-        color += mix(vec3(0.0, 0.0, 0.0), vec3(.3) , 1.-smoothstep(0.7, 1., 0.8*length(st-mouse)+fbm3));
-        //color *= mix(vec3(0.0, 0.0, 0.0), vec3(1.) , smoothstep(0.9, 1., 0.8*length(st-mouse)+fbm3));
-    }
+    //comment out the following line to remove the mouse functionality
+    // if (!(u_mouse.x <= 25. || u_mouse.x >= u_resolution.x -25. || u_mouse.y <= 25. || u_mouse.y >= u_resolution.y - 25.)) {
+    //     // color = mix(color, color / 2., 1.-smoothstep(0.7, 1., 0.8*length(st-mouse)+fbm3));
+    //     color *= mix(vec3(0.0, 0.0, 0.0), vec3(1.) , smoothstep(0.9, 1., 2.*length(st-mouse)+fbm3));
+    // }
 
+    // color = mix(color, vec3(0.0, 0.0, 0.0),1. - step(0.1, (length(st-mouse))));
 
     gl_FragColor = vec4(color,1.0);
 }

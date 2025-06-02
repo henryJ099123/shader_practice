@@ -106,15 +106,18 @@ vec3 hardlines_voronoi_with_point(in vec2 st, in float scale, in vec2 point) {
 
 vec2 transform(in vec2 st, float scale, vec2 pre_translate, vec2 post_translate) {
     st -= pre_translate;
-    vec2 uv = vec2(length(st), atan(st.y, st.x));
+    vec2 uv = st;
+    // vec2 uv = vec2(length(st), atan(st.y, st.x));
     //if(st.x < 0.) uv.y += PI;
     //uv.y = 0.;
-    uv.y = uv.y/2./PI + 0.5;
+    // uv.y = uv.y/2./PI + 0.5;
     //uv.y = .5-.5*cos(2.*uv.y*PI);
     //uv.y = 1.-pow((2.*(uv.y-0.5)),2.);
     uv *= scale;
-    //uv.y = mod(uv.y, scale);
-    uv.r = 2. * sin(uv.r);
+    // uv.y = mod(uv.y, scale);
+    uv.x = 2. * cos(uv.x);
+    // uv.y = length(uv);
+    // uv.y = 1. * sin(uv.y);
     uv += post_translate;
     return uv;
 }
@@ -125,7 +128,8 @@ void main() {
     const float SCALE = 10.;
     vec2 mouse = u_mouse / u_resolution;
     mouse.x *= u_resolution.x / u_resolution.y;
-    vec3 color = vec3(0.349, 0.0353, 0.0);
+    // vec3 color = vec3(0.2745, 0.0118, 0.0118);
+    vec3 color = vec3(0.);
     
 //     st -= 0.5;
     
@@ -137,10 +141,10 @@ void main() {
     
 	vec3 voronoi = hardlines_voronoi_with_point(st, SCALE, mouse);
 
-    // color += vec3(step(voronoi.x, 0.02));
-    color = mix(vec3(0.4824, 0.0392, 0.0392), vec3(0.7765, 0.2039, 0.0275), voronoi.z);
-    color = mix(vec3(0.6902, 0.4157, 0.5647), vec3(0.1412, 0.2627, 0.5765), voronoi.z);
-    // color = mix(color, vec3(0.3843, 0.0784, 0.0118), voronoi.y);
+    color += vec3(step(voronoi.x, 0.02));
+    // color += vec3(smoothstep(0.02, 0., voronoi.x));
+    //
+    // color = mix(color, vec3(1.0, 0.2353, 0.0), voronoi.z);
 
 //     // Show isolines
     //color -= abs(sin(80.0*m_dist))*0.07;
